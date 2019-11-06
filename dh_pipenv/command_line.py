@@ -6,6 +6,10 @@ incompatible arguments.
 import os
 import subprocess
 import sys
+import logging
+
+
+logger = logging.getLogger()
 
 
 def _remove_kwarg(args, kwarg):
@@ -63,21 +67,17 @@ def main():
     assert os.path.isfile(pipenv_path), "Can't find pipenv: %s" % pipenv_path
     # Setup environment variables
     environment = os.environ.copy()
-    # Fallback to pip if requirements.txt not specified
-    pip_args = sys.argv[1:]
-    if '-r' not in pip_args:
-        cmd_args = [pip_path] + pip_args
-    else:
-        # Ensure Pipfile.lock exists
-        pipfile_exists = os.path.isfile(os.path.join(os.getcwd(), 'Pipfile.lock'))
-        assert pipfile_exists, "Pipfile.lock doesn't exist"
-        # Get args
-        pipenv_args = convert_pip_args_to_pipenv_args(sys.argv[1:])
-        cmd_args = [pipenv_path] + pipenv_args
-        # Set VIRTUAL_ENV only for `pipenv`, to make sure it installs files in
-        # the right location.
-        venv_dir = os.path.dirname(bin_dir)
-        environment['VIRTUAL_ENV'] = environment.get('VIRTUAL_ENV', venv_dir)
+
+    # Ensure Pipfile.lock exists
+    pipfile_exists = os.path.isfile(os.path.join(os.getcwd(), 'Pipfile.lock'))
+    assert pipfile_exists, "Pipfile.lock doesn't exist"
+    # Get args
+    pipenv_args = convert_pip_args_to_pipenv_args(sys.argv[1:])
+    cmd_args = [pipenv_path] + pipenv_args
+    # Set VIRTUAL_ENV only for `pipenv`, to make sure it installs files in
+    # the right location.
+    venv_dir = os.path.dirname(bin_dir)
+    environment['VIRTUAL_ENV'] = environment.get('VIRTUAL_ENV', venv_dir)
     subprocess.check_call(cmd_args, env=environment)
 
 
