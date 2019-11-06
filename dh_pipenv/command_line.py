@@ -53,7 +53,7 @@ def convert_pip_args_to_pipenv_args(pip_args):
     # Add additional args
     # Can't be specified by --extra-pip-arg in debian/rules because used by pip
     # when installing preinstall packages ie) pipenv
-    return pip_args + ['--system']
+    return pip_args + ['--deploy']
 
 
 def main():
