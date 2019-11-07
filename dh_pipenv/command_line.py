@@ -73,6 +73,7 @@ def main():
     assert pipfile_exists, "Pipfile.lock doesn't exist"
     # Get args
     pipenv_args = convert_pip_args_to_pipenv_args(sys.argv[1:])
+    pipenv_args.remove(".") if "." in pipenv_args
     cmd_args = [pipenv_path] + pipenv_args
     # Set VIRTUAL_ENV only for `pipenv`, to make sure it installs files in
     # the right location.
